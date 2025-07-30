@@ -2,11 +2,11 @@ import z from "zod";
 import { isActive, Role } from "./user.interface";
 
 export const createUserZodSchema = z.object({
-        // name: z.string({ invalid_type_error: "Nmae must be string" }).min(2, { message: "Name too short" }).max(50, { message: "Name max length 50" }),
-        name: z.object({
-            firstName: z.string({ invalid_type_error: "Nmae must be string" }).min(2, { message: "Name too short" }).max(50, { message: "Name max length 50" }),
-            lastName: z.string({ invalid_type_error: "Nmae must be string" }).min(2, { message: "Name too short" }).max(50, { message: "Name max length 50" }),
-        }),
+        name: z.string({ invalid_type_error: "Nmae must be string" }).min(2, { message: "Name too short" }).max(50, { message: "Name max length 50" }),
+        // name: z.object({
+        //     firstName: z.string({ invalid_type_error: "Nmae must be string" }).min(2, { message: "Name too short" }).max(50, { message: "Name max length 50" }),
+        //     lastName: z.string({ invalid_type_error: "Nmae must be string" }).min(2, { message: "Name too short" }).max(50, { message: "Name max length 50" }),
+        // }),
         email: z.string().email(), //m27.2 09:28
         password: z
         .string({invalid_type_error: "Password must be string"})

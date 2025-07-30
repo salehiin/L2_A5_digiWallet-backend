@@ -36,6 +36,9 @@ L2_A5_digiWallet-backend
 # 28.03 - have to check if cookie is not done earlier 
 # 28.04
 
+some@gmail.com
+123@sS567
+
 
 # https://github.com/salehiin/L2_A5_digiWallet-backend
 

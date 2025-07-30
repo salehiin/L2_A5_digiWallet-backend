@@ -15,6 +15,7 @@ import passport from "passport";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    // const loginInfo = await AuthServices.credentialsLogin(req.body)
 
     passport.authenticate("local", async (error: any, user: any, info: any) => {
 
