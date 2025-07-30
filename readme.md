@@ -31,6 +31,11 @@ L2_A5_digiWallet-backend
 # 27.08 - 
 # 27.11 - 07:30(should check)
 
+# 28.01 -
+# 28.02 - 
+# 28.03 - have to check if cookie is not done earlier 
+# 28.04
+
 
 # https://github.com/salehiin/L2_A5_digiWallet-backend
 

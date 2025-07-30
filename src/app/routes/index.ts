@@ -17,22 +17,22 @@ const moduleRoutes = [
         path: "/auth",
         route: AuthRoutes
     },
-    {
-        path: "/division",
+    // {
+        // path: "/division",
         // route: DivisionRoutes  // division=commission
-    },
-    {
-        path: "/tour",
+    // },
+    // {
+    //     path: "/tour",
         // route: TourRoutes // tour=wallet
-    },
-    {
-        path: "/booking",
+    // },
+    // {
+    //     path: "/booking",
         // route: BookingRoutes // booking=transaction
-    },
-    {
-        path: "/payment",
-        route: PaymentRoutes
-    },
+    // },
+    // {
+        // path: "/payment",
+        // route: Routes
+    // },
 ]
 
 moduleRoutes.forEach((route)=>{

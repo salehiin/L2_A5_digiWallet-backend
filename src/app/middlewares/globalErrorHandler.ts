@@ -28,16 +28,16 @@ export const globalErrorHandler = (error: any, req: Request, res: Response, next
 
     if (error.code === 11000) {
         console.log("Duplicate error", error.message);
-        const simplifiedError = handleDuplicateError(error)
+        // const simplifiedError = handleDuplicateError(error)
         statusCode = simplifiedError.statusCode;
         message = simplifiedError.message
     } else if (error.name === "CastError") {
-        const simplifiedError = handleCastError(error)
+        // const simplifiedError = handleCastError(error)
         statusCode = simplifiedError.statusCode;
         message = simplifiedError.message
     }
     else if (error.name === "ZodError") {
-        const simplifiedError = handleZodError(error)
+        // const simplifiedError = handleZodError(error)
         statusCode = simplifiedError.statusCode
         message =simplifiedError.message
 
@@ -45,7 +45,7 @@ export const globalErrorHandler = (error: any, req: Request, res: Response, next
     }
     // mongoose validation error
     else if (error.name === "ValidationError") {
-        const simplifiedError = handleValidationError(error)
+        // const simplifiedError = handleValidationError(error)
         statusCode = simplifiedError.statusCode;
         errorSources = simplifiedError.errorSources as TErrorSources[]
 
