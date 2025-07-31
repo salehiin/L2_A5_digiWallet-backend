@@ -63,14 +63,14 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
     //     secure: false
     // })
 
-    setAuthCookie(res, loginInfo)
+    // setAuthCookie(res, loginInfo)
 
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Login successfull",
-        data: loginInfo
-    })
+    // sendResponse(res, {
+    //     success: true,
+    //     statusCode: httpStatus.OK,
+    //     message: "Login successfull",
+    //     data: loginInfo
+    // })
 
 })
 

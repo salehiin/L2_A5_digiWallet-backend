@@ -25,32 +25,33 @@ export const globalErrorHandler = (error: any, req: Request, res: Response, next
     let statusCode = 500
     let message = "Something Went Wrong!!"
 
-
+// Duplicate
     if (error.code === 11000) {
-        console.log("Duplicate error", error.message);
-        // const simplifiedError = handleDuplicateError(error)
-        // statusCode = simplifiedError.statusCode;
-        // message = simplifiedError.message
+        // console.log("Duplicate error", error.message);
+        const simplifiedError = handleDuplicateError(error)
+        statusCode = simplifiedError.statusCode;
+        message = simplifiedError.message
+        // Object Id
     } else if (error.name === "CastError") {
-        // const simplifiedError = handleCastError(error)
-        // statusCode = simplifiedError.statusCode;
-        // message = simplifiedError.message
+        const simplifiedError = handleCastError(error)
+        statusCode = simplifiedError.statusCode;
+        message = simplifiedError.message
     }
     else if (error.name === "ZodError") {
-        // const simplifiedError = handleZodError(error)
-        // statusCode = simplifiedError.statusCode
-        // message =simplifiedError.message
+        const simplifiedError = handleZodError(error)
+        statusCode = simplifiedError.statusCode
+        message =simplifiedError.message
 
-        // errorSources = simplifiedError.errorSources as TErrorSources[]
+        errorSources = simplifiedError.errorSources as TErrorSources[]
     }
     // mongoose validation error
     else if (error.name === "ValidationError") {
-        // const simplifiedError = handleValidationError(error)
-        // statusCode = simplifiedError.statusCode;
-        // errorSources = simplifiedError.errorSources as TErrorSources[]
+        const simplifiedError = handleValidationError(error)
+        statusCode = simplifiedError.statusCode;
+        errorSources = simplifiedError.errorSources as TErrorSources[]
 
         // message = error.message
-        // message = simplifiedError.message
+        message = simplifiedError.message
     }
     else if (error instanceof AppError) {
         statusCode = error.statusCode
