@@ -35,6 +35,13 @@ L2_A5_digiWallet-backend
 # 28.02 - 
 # 28.03 - have to check if cookie is not done earlier 
 # 28.04
+# 28.08
+# 28.09
+# 28.11 
+
+# 29.01 - 
+
+digi-wallet
 
 some@gmail.com
 123@sS567
@@ -56,3 +63,4 @@ npm i --save-dev @types/express-session
 npm i cookie-parser
 npm i -D @types/cookie-parser
 npm install passport passport-local
+npm install passport-google-oauth20
