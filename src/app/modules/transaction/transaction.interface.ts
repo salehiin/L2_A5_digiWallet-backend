@@ -1,10 +1,10 @@
-import { Types } from "mongoose";
-
 export interface ITransaction {
-  from: Types.ObjectId | null; // null if it's a top-up
-  to: Types.ObjectId | null;   // null if it's a withdrawal
+  _id?: string;
+  walletId: string;
   amount: number;
-  type: "deposit" | "withdrawal" | "transfer";
+  type: "credit" | "debit";
   description?: string;
-  status?: "pending" | "completed" | "failed";
+  status: "pending" | "completed" | "failed";
+  createdAt?: Date;
+  updatedAt?: Date;
 }

@@ -88,3 +88,8 @@ npm i cookie-parser
 npm i -D @types/cookie-parser
 npm install passport passport-local
 npm install passport-google-oauth20
+
+
+not provided:
+wallet.interface
+transaction.interface

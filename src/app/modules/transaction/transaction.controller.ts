@@ -1,54 +1,17 @@
-import { Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-// import { TransactionService } from "./transaction.service";
+import { Request, Response } from 'express';
+import * as txService from './transaction.service';
 
-const createTransaction = catchAsync(async (req: Request, res: Response) => {
-//   const result = await TransactionService.createTransaction(req.body);
-  sendResponse(res, {
-    statusCode: 201,
-    success: true,
-    message: "Transaction recorded successfully",
-    data: result,
-  });
-});
+export const createTransactionController = async (req: Request, res: Response) => {
+  const tx = await txService.createTransaction({ ...req.body, createdBy: req.user!.id });
+  res.json(tx);
+};
 
-const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
-//   const result = await TransactionService.getAllTransactions(req.query);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Transactions retrieved successfully",
-    data: result.data,
-    meta: result.meta,
-  });
-});
+export const getAllTransactions = async (_req: Request, res: Response) => {
+  const txs = await txService.listAllTransactions();
+  res.json(txs);
+};
 
-const getTransactionById = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await TransactionService.getTransactionById(id);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Transaction retrieved successfully",
-    data: result,
-  });
-});
-
-const deleteTransaction = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await TransactionService.deleteTransaction(id);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Transaction deleted successfully",
-    data: result,
-  });
-});
-
-export const TransactionController = {
-  createTransaction,
-  getAllTransactions,
-  getTransactionById,
-  deleteTransaction,
+export const getMyTransactions = async (_req: Request, res: Response) => {
+  const txs = await txService.listTransactionsForUser(req.user!.id);
+  res.json(txs);
 };

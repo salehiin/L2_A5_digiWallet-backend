@@ -1,8 +1,9 @@
-import { Types } from "mongoose";
-
 export interface IWallet {
-  user: Types.ObjectId;
+  _id?: string;
+  userId: string;
   balance: number;
-  currency: string;
-  isActive?: boolean;
+  currency: string; // e.g., "USD", "BDT"
+  status: "active" | "suspended" | "closed";
+  createdAt?: Date;
+  updatedAt?: Date;
 }

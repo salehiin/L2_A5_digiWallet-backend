@@ -1,43 +1,21 @@
-// src/modules/wallet/wallet.service.ts
+import { WalletModel, IWallet } from './wallet.model';
 
-import { Wallet } from "./wallet.model";
-import { IWallet } from "./wallet.interface";
+export async function getWalletByUserId(userId: string): Promise<IWallet | null> {
+  return WalletModel.findOne({ user: userId }).lean();
+}
 
-const createWallet = async (payload: IWallet): Promise<IWallet> => {
-  const wallet = await Wallet.create(payload);
-  return wallet;
-};
+export async function updateBalance(userId: string, amount: number): Promise<IWallet | null> {
+  return WalletModel.findOneAndUpdate(
+    { user: userId },
+    { $inc: { balance: amount } },
+    { new: true }
+  );
+}
 
-const getAllWallets = async (): Promise<IWallet[]> => {
-  const wallets = await Wallet.find();
-  return wallets;
-};
+export async function blockWallet(userId: string, blocked: boolean): Promise<IWallet | null> {
+  return WalletModel.findOneAndUpdate({ user: userId }, { blocked }, { new: true });
+}
 
-const getSingleWallet = async (id: string): Promise<IWallet | null> => {
-  const wallet = await Wallet.findById(id);
-  return wallet;
-};
-
-const updateWallet = async (
-  id: string,
-  payload: Partial<IWallet>
-): Promise<IWallet | null> => {
-  const updatedWallet = await Wallet.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  return updatedWallet;
-};
-
-const deleteWallet = async (id: string): Promise<IWallet | null> => {
-  const wallet = await Wallet.findByIdAndDelete(id);
-  return wallet;
-};
-
-export const WalletService = {
-  createWallet,
-  getAllWallets,
-  getSingleWallet,
-  updateWallet,
-  deleteWallet,
-};
+export async function listAllWallets(): Promise<IWallet[]> {
+  return WalletModel.find().populate('user').lean();
+}

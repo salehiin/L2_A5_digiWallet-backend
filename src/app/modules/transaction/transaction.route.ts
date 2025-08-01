@@ -1,11 +1,15 @@
-// src/modules/transaction/transaction.route.ts
-import express from "express";
-import { TransactionController } from "./transaction.controller";
+import express from 'express';
+import {
+  getAllTransactions,
+  getMyTransactions,
+  createTransactionController
+} from './transaction.controller';
+import { authMiddleware, roleMiddleware } from '../../middlewares/auth';
 
 const router = express.Router();
 
-router.post("/", TransactionController.createTransaction);
-router.get("/", TransactionController.getAllTransactions);
-router.get("/:id", TransactionController.getSingleTransaction);
+router.get('/', authMiddleware(['admin']), getAllTransactions);
+router.get('/me', authMiddleware(['user', 'agent']), getMyTransactions);
+router.post('/', authMiddleware(['admin']), createTransactionController);
 
 export const TransactionRoutes = router;
