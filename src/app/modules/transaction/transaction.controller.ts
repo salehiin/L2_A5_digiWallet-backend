@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { TransactionService } from "./transaction.service";
+// import { TransactionService } from "./transaction.service";
 
 const createTransaction = catchAsync(async (req: Request, res: Response) => {
-  const result = await TransactionService.createTransaction(req.body);
+//   const result = await TransactionService.createTransaction(req.body);
   sendResponse(res, {
     statusCode: 201,
     success: true,
@@ -14,7 +14,7 @@ const createTransaction = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
-  const result = await TransactionService.getAllTransactions(req.query);
+//   const result = await TransactionService.getAllTransactions(req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,
