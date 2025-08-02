@@ -1,108 +1,80 @@
 
 
-# 25.03
+# DigiWallet Backend
 
-// auth=auth, user=user, tour=wallet, booking=transaction, division=commission, payment=payment, sslCommerz=sslCommerz
-auth=auth, user=user, tour=wallet, booking=transaction, division=commission, payment=payment, sslCommerz=sslCommerz, commission, admin
-tour management: , , , , , , 
+## Project Overview
+DigiWallet Backend is a Node.js and Express-based RESTful API server for a digital wallet system. It allows users to register, authenticate, manage wallets, send money, view transactions, and track commissions. The backend uses MongoDB with Mongoose for data storage and JWT for authentication.
 
-# according to tour management find similiar data type in digital wallet
+---
 
-# please provide commission interface following below format for digital wallet system
+## Features
 
-Let me know if you'd like:
+- User registration and authentication (login, refresh token, logout)
+- Password reset and update
+- Wallet creation and retrieval
+- Money transfer between wallets with commission deduction
+- View all transactions (admin/super-admin)
+- View personal transactions (users/agents)
+- Commission tracking for transactions
+- Role-based access control (admin, super_admin, user, agent)
+- Secure JWT-based authentication and authorization
 
-transaction.service.ts (business logic)
+---
 
-transaction.validation.ts (Zod schema)
+## Tech Stack
 
-Auto-update of Wallet balances when a transaction occurs
+- **Backend:** Node.js, Express.js, TypeScript
+- **Database:** MongoDB (with Mongoose)
+- **Authentication:** JWT (JSON Web Tokens)
+- **Tools:** ts-node-dev, dotenv, http-status-codes
 
-Filtering/sorting/pagination logic in getAllTransactions
+---
 
-Would you like the full service.ts and validation.ts too?
+## API Endpoints
 
-sending money between users, deducting commission, updating wallet balance, etc.
+### User
+| Endpoint                                    | Method | Description                      |
+|---------------------------------------------|--------|----------------------------------|
+| `/api/v1/user/register`                      | POST   | Register a new user              |
+| `/api/v1/user/all-users`                     | GET    | Retrieve all registered users    |
+| `/api/v1/user/:userId`                       | PATCH  | Update user details by ID        |
 
-i want a 2% static commission for all transaction, please help me the with codes clearly where to apply
+### Auth
+| Endpoint                                    | Method | Description                       |
+|---------------------------------------------|--------|----------------------------------|
+| `/api/v1/auth/login`                         | POST   | User login                      |
+| `/api/v1/auth/refresh-token`                 | POST   | Get new access token             |
+| `/api/v1/auth/logout`                        | POST   | Logout user                     |
+| `/api/v1/auth/reset-password`                | POST   | Reset or change password         |
 
-UniWallet
-DigiWallet
-https://github.com/Apollo-Level2-Web-Dev/B5A5/blob/main/1.%20Digital%20Wallet%20System.md
+### Transaction
+| Endpoint                                    | Method | Description                        |
+|---------------------------------------------|--------|----------------------------------|
+| `/api/v1/transaction/send`                   | POST   | Send money from one wallet to another |
+| `/api/v1/transaction`                        | GET    | Get all transactions (admin only) |
+| `/api/v1/transaction/my-transactions`       | GET    | Get transactions of the logged-in user |
 
-# 25.04 - data modelling
-# 25.05 - 
-# 25.06 - api end points - should check when do
-# 25.07 - project setup
-# 25.10 -
-# 25.11
+### Wallet
+| Endpoint                                    | Method | Description                        |
+|---------------------------------------------|--------|----------------------------------|
+| `/api/v1/wallet`                            | POST   | Create a wallet for a user         |
+| `/api/v1/wallet/:userId`                    | GET    | Get wallet details for a user      |
 
-L2_A5_digiWallet-backend
+### Commission
+| Endpoint                                    | Method | Description                        |
+|---------------------------------------------|--------|----------------------------------|
+| `/api/v1/commission`                        | GET    | View all commissions               |
 
-# 26.01
-# 26.5 - 06:00
-# 26.7 -
+---
 
-# 27.01 -
-# 27.04 -
-# 27.06 - 
-# 27.08 - 
-# 27.11 - 07:30(should check)
+## Getting Started
 
-# 28.01 -
-# 28.02 - 
-# 28.03 - have to check if cookie is not done earlier 
-# 28.04
-# 28.08
-# 28.09
-# 28.11 
+### Prerequisites
+- Node.js (v16+)
+- MongoDB instance (local or cloud, e.g. MongoDB Atlas)
+- npm or yarn
 
-# 29.01 - 
-# 29.04 -
-# 29.06 -
-# 29.09 -
-
-# 30.02 -
-# 30.08 -
-# 30.11
-
-
-
-
-digi-wallet
-
-some@gmail.com
-123@sS567
-
-
-# https://github.com/salehiin/L2_A5_digiWallet-backend
-
-# https://l2-a5-digi-wallet-backend-salehins-projects.vercel.app/
-# https://vercel.com/salehins-projects/l2-a5-digi-wallet-backend
-# https://l2-a5-digi-wallet-backend.vercel.app/
-
-
-npm i express mongoose zod jsonwebtoken cors dotenv
-npm i -D ts-node-dev @types/express @types/cors @types/dotenv @types/jsonwebtoken
-
-npm i axios
-npm i express-session
-npm i --save-dev @types/express-session
-npm i cookie-parser
-npm i -D @types/cookie-parser
-npm install passport passport-local
-npm install passport-google-oauth20
-
-
-not provided:
-wallet.interface
-transaction.interface
-
-
-
-some@gmail.com    688a3f1c8bf9958931845446
-every@gmail.com   688a42b73e56c7a65769af52
-
-any@gmail.com     688a3fc512a583699db7a880
-
-each@gmail.com  688a4fb7218d99d3f9d6bc91
+### Installation
+1. Clone the repository
+```bash
+git clone https://github.com/salehiin/L2_A5_digiWallet-backend.git
