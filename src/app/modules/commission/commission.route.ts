@@ -1,12 +1,8 @@
-// src/modules/commission/commission.route.ts
 import express from "express";
-import { CommissionController } from "./commission.controller";
-
+import { getAllCommission } from "./commission.controller";
+import { checkAuth } from "../../middlewares/checkAuth";
 const router = express.Router();
 
-router.post("/", CommissionController.createCommission);
-router.get("/", CommissionController.getAllCommissions);
-router.get("/:id", CommissionController.getSingleCommission);
+router.get("/", checkAuth("admin", "superadmin"), getAllCommission);
 
 export const CommissionRoutes = router;
-

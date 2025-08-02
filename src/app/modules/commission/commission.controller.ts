@@ -1,60 +1,26 @@
-import { Request, Response, NextFunction } from "express";
-import { CommissionService } from "./commission.service";
+import { Request, Response } from "express";
 import httpStatus from "http-status-codes";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import AppError from "../../errorHelpers/AppError";
+import { CommissionService } from "./commission.service";
 
-const createCommission = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const commissionData = req.body;
-    const result = await CommissionService.createCommission(commissionData);
+// ✅ Get All Commissions – Only Admins & Super Admins
+export const getAllCommission = catchAsync(async (req: Request, res: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const role = ((req.user as any)?.role || "").toLowerCase();
 
-    res.status(httpStatus.CREATED).json({
-      success: true,
-      message: "Commission created successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  if (role !== "admin" && role !== "super_admin") {
+  throw new AppError(httpStatus.FORBIDDEN, "Access denied");
+}
 
-const getAllCommissions = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await CommissionService.getAllCommissions();
+  const result = await CommissionService.getAllCommissions();
 
-    res.status(httpStatus.OK).json({
-      success: true,
-      message: "All commissions retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Commissions fetched successfully",
+    data: result,
+  });
+});
 
-const getSingleCommission = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const result = await CommissionService.getSingleCommission(id);
-
-    if (!result) {
-      return res.status(httpStatus.NOT_FOUND).json({
-        success: false,
-        message: "Commission not found",
-      });
-    }
-
-    res.status(httpStatus.OK).json({
-      success: true,
-      message: "Commission retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const CommissionController = {
-  createCommission,
-  getAllCommissions,
-  getSingleCommission,
-};

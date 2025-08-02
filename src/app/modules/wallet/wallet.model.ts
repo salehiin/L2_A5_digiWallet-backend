@@ -7,9 +7,9 @@ export interface IWallet extends Document {
 }
 
 const walletSchema = new Schema<IWallet>({
-  userId: { type: mongoose.Types.ObjectId, required: true, unique: true, ref: 'User' },
+  userId: { type: Schema.Types.ObjectId, required: true, unique: true, ref: 'User' },
   balance: { type: Number, required: true, default: 0 },
   isLocked: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 export const WalletModel = mongoose.model<IWallet>('Wallet', walletSchema);

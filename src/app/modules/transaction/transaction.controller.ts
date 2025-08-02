@@ -26,9 +26,44 @@ export const getAllTransactions = async (req: Request, res: Response) => {
 };
 
 // ✅ 2. Get My Transactions (User / Agent)
+// export const getMyTransactions = async (req: Request, res: Response) => {
+//   try {
+//     const userId = req.user?._id;
+
+//     const wallet = await WalletModel.findOne({ userId });
+
+//     if (!wallet) {
+//       return res.status(httpStatus.NOT_FOUND).json({
+//         success: false,
+//         message: 'Wallet not found for this user',
+//       });
+//     }
+
+//     const transactions = await Transaction.find({ walletId: wallet._id }).sort({ createdAt: -1 });
+
+//     res.status(httpStatus.OK).json({
+//       success: true,
+//       message: 'Your transactions fetched successfully',
+//       data: transactions,
+//     });
+//   } catch (error) {
+//     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+//       success: false,
+//       message: 'Failed to fetch user transactions',
+//     });
+//   }
+// };
+
 export const getMyTransactions = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized access',
+      });
+    }
 
     const wallet = await WalletModel.findOne({ userId });
 
@@ -41,20 +76,106 @@ export const getMyTransactions = async (req: Request, res: Response) => {
 
     const transactions = await Transaction.find({ walletId: wallet._id }).sort({ createdAt: -1 });
 
-    res.status(httpStatus.OK).json({
+    return res.status(httpStatus.OK).json({
       success: true,
       message: 'Your transactions fetched successfully',
       data: transactions,
     });
   } catch (error) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Failed to fetch user transactions',
     });
   }
 };
 
+
 // ✅ 3. Send Money (Already exists)
+// export const sendMoney = async (req: Request, res: Response) => {
+//   try {
+//     const { senderId, receiverId, amount } = req.body;
+
+//     if (!senderId || !receiverId || !amount) {
+//       return res.status(httpStatus.BAD_REQUEST).json({ message: "Missing required fields" });
+//     }
+
+//     if (senderId === receiverId) {
+//       return res.status(httpStatus.BAD_REQUEST).json({ message: "Sender and Receiver must be different" });
+//     }
+
+//     const senderWallet = await WalletModel.findOne({ userId: senderId });
+//     const receiverWallet = await WalletModel.findOne({ userId: receiverId });
+
+//     if (!senderWallet || !receiverWallet) {
+//       return res.status(httpStatus.NOT_FOUND).json({ message: "Sender or Receiver wallet not found" });
+//     }
+
+//     const commissionRate = 0.05;
+//     const commissionAmount = amount * commissionRate;
+//     const totalDeduct = amount + commissionAmount;
+
+//     if (senderWallet.balance < totalDeduct) {
+//       return res.status(httpStatus.BAD_REQUEST).json({ message: "Insufficient balance" });
+//     }
+
+//     // ✅ Update Wallets
+//     senderWallet.balance -= totalDeduct;
+//     receiverWallet.balance += amount;
+//     await senderWallet.save();
+//     await receiverWallet.save();
+
+//     // ✅ Log Transactions
+//     await Transaction.create([
+//       {
+//         walletId: senderWallet._id,
+//         amount: amount,
+//         type: "debit",
+//         description: `Sent to user ${receiverId}`,
+//         status: "completed",
+//         createdAt: new Date(),
+//       },
+//       {
+//         walletId: receiverWallet._id,
+//         amount: amount,
+//         type: "credit",
+//         description: `Received from user ${senderId}`,
+//         status: "completed",
+//         createdAt: new Date(),
+//       },
+//       {
+//         walletId: senderWallet._id,
+//         amount: commissionAmount,
+//         type: "debit",
+//         description: "Commission deducted",
+//         status: "completed",
+//         createdAt: new Date(),
+//       }
+//     ]);
+
+//     // ✅ Log Commission
+//     await Commission.create({
+//       transactionId: "N/A",
+//       amount: commissionAmount,
+//       adminId: "admin_001",
+//       createdAt: new Date(),
+//     });
+
+//     return res.status(httpStatus.OK).json({
+//       message: "Transfer successful",
+//       data: {
+//         senderId,
+//         receiverId,
+//         amountSent: amount,
+//         commissionAmount,
+//       },
+//     });
+
+//   } catch (error) {
+//     console.error("Send Money Error:", error);
+//     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
+//   }
+// };
+
 export const sendMoney = async (req: Request, res: Response) => {
   try {
     const { senderId, receiverId, amount } = req.body;
@@ -74,17 +195,27 @@ export const sendMoney = async (req: Request, res: Response) => {
       return res.status(httpStatus.NOT_FOUND).json({ message: "Sender or Receiver wallet not found" });
     }
 
+    if (amount <= 0) {
+      return res.status(httpStatus.BAD_REQUEST).json({ message: "Amount must be greater than 0" });
+    }
+
+    if (senderWallet.balance < amount) {
+      return res.status(httpStatus.BAD_REQUEST).json({ message: "Insufficient balance in sender's wallet" });
+    }
+
+    // Commission settings
     const commissionRate = 0.05;
     const commissionAmount = amount * commissionRate;
-    const totalDeduct = amount + commissionAmount;
 
-    if (senderWallet.balance < totalDeduct) {
-      return res.status(httpStatus.BAD_REQUEST).json({ message: "Insufficient balance" });
+    if (receiverWallet.balance < commissionAmount) {
+      return res.status(httpStatus.BAD_REQUEST).json({ message: "Receiver has insufficient balance to pay commission" });
     }
 
     // ✅ Update Wallets
-    senderWallet.balance -= totalDeduct;
+    senderWallet.balance -= amount;
     receiverWallet.balance += amount;
+    receiverWallet.balance -= commissionAmount;
+
     await senderWallet.save();
     await receiverWallet.save();
 
@@ -107,25 +238,33 @@ export const sendMoney = async (req: Request, res: Response) => {
         createdAt: new Date(),
       },
       {
-        walletId: senderWallet._id,
+        walletId: receiverWallet._id,
         amount: commissionAmount,
         type: "debit",
-        description: "Commission deducted",
+        description: "Commission deducted from receiver",
         status: "completed",
         createdAt: new Date(),
       }
     ]);
 
     // ✅ Log Commission
+    // await Commission.create({
+    //   transactionId: "N/A",
+    //   amount: commissionAmount,
+    //   adminId: "admin_001",
+    //   createdAt: new Date(),
+    // });
+
     await Commission.create({
-      transactionId: "N/A",
+      transactionId: `transfer-${Date.now()}`,
       amount: commissionAmount,
+      fromWalletId: receiverWallet._id,
       adminId: "admin_001",
       createdAt: new Date(),
     });
 
     return res.status(httpStatus.OK).json({
-      message: "Transfer successful",
+      message: "Transfer successful. Commission deducted from receiver.",
       data: {
         senderId,
         receiverId,
@@ -139,6 +278,10 @@ export const sendMoney = async (req: Request, res: Response) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
   }
 };
+
+
+
+
 
 // // ✅ Export all controllers
 // export {

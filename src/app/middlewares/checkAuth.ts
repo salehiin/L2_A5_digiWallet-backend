@@ -16,12 +16,18 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
             throw new AppError(403, "No token received")
         }
 
-        const token = accessToken.split(" ")[1];
-        const verifiedToken = verifyToken(accessToken, envVars.JWT_ACCESS_SECRET) as JwtPayload
+        // const token = accessToken.split(" ")[1];
+        const token = accessToken.startsWith("Bearer ")
+            ? accessToken.split(" ")[1]
+            : accessToken;
+        const decoded = verifyToken(
+            token,
+            envVars.JWT_ACCESS_SECRET
+        ) as JwtPayload & { _id: string; email: string; role: string };
 
         //------------------------------------------------------------------------------------------------
 
-        const isUserExist = await User.findOne({ email: verifiedToken.email })
+        const isUserExist = await User.findOne({ email: decoded.email });
 
         if (!isUserExist) {
             throw new AppError(httpStatus.BAD_REQUEST, "User doesn't exist")
@@ -36,12 +42,25 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         // ---------------------------------------------------------------------------------------------
 
 
-        const userRole = verifiedToken.role.toLowerCase();
-        if (!authRoles.includes(userRole)) {
-            throw new AppError(403, "You are not permitted to view this route")
+        // const userRole = decoded.role?.toLowerCase();
+
+        // if (!userRole || (authRoles.length && !authRoles.includes(userRole))) {
+        //     throw new AppError(403, "You are not permitted to view this route");
+        // }
+
+        const userRole = decoded.role?.toLowerCase();
+        const normalizedAuthRoles = authRoles.map(role => role.toLowerCase());
+
+        if (!userRole || (normalizedAuthRoles.length && !normalizedAuthRoles.includes(userRole))) {
+            throw new AppError(403, "You are not permitted to view this route");
         }
 
-        req.user = verifiedToken
+
+        req.user = {
+            _id: decoded._id,
+            email: decoded.email,
+            role: userRole,
+        };
         next()
 
     } catch (error) {
