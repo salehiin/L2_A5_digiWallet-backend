@@ -5,6 +5,7 @@ import { envVars } from "../config/env";
 import httpStatus from "http-status-codes";
 import { isActive } from "../modules/user/user.interface";
 import { verifyToken } from "../utils/jwt";
+import { User } from "../modules/user/user.model";
 
 
 export const checkAuth = (...authRoles: string[]) => async (req: Request, res: Response, next: NextFunction) => {
@@ -15,6 +16,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
             throw new AppError(403, "No token received")
         }
 
+        const token = accessToken.split(" ")[1];
         const verifiedToken = verifyToken(accessToken, envVars.JWT_ACCESS_SECRET) as JwtPayload
 
         //------------------------------------------------------------------------------------------------
@@ -33,7 +35,9 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
 
         // ---------------------------------------------------------------------------------------------
 
-        if (!authRoles.includes(verifiedToken.role)) {
+
+        const userRole = verifiedToken.role.toLowerCase();
+        if (!authRoles.includes(userRole)) {
             throw new AppError(403, "You are not permitted to view this route")
         }
 

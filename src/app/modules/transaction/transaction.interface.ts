@@ -8,3 +8,12 @@ export interface ITransaction {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+export interface ITransaction {
+  senderId: string;
+  receiverId: string;
+  amount: number;
+  commissionAmount: number;
+  timestamp: Date;
+}

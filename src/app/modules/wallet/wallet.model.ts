@@ -1,20 +1,15 @@
-import { Schema, model } from "mongoose";
-import { IWallet } from "./wallet.interface";
+import mongoose, { Schema, Document } from 'mongoose';
 
-const walletSchema = new Schema<IWallet>(
-  {
-    userId: { type: String, required: true },
-    balance: { type: Number, required: true, default: 0 },
-    currency: { type: String, required: true, default: "USD" },
-    status: {
-      type: String,
-      enum: ["active", "suspended", "closed"],
-      default: "active",
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+export interface IWallet extends Document {
+  userId: mongoose.Types.ObjectId;
+  balance: number;
+  isLocked: boolean;
+}
 
-export const Wallet = model<IWallet>("Wallet", walletSchema);
+const walletSchema = new Schema<IWallet>({
+  userId: { type: mongoose.Types.ObjectId, required: true, unique: true, ref: 'User' },
+  balance: { type: Number, required: true, default: 0 },
+  isLocked: { type: Boolean, default: false },
+});
+
+export const WalletModel = mongoose.model<IWallet>('Wallet', walletSchema);

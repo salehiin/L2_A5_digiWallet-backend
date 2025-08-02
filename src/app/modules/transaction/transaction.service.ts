@@ -7,20 +7,28 @@ export async function createTransaction(data: Partial<ITransaction>): Promise<IT
   session.startTransaction();
   try {
     const { from, to, amount, type, createdBy } = data;
+
     if (from) {
       const wFrom = await walletService.getWalletByUserId(from.toString());
       if (!wFrom) throw new Error('Sender wallet not found');
       if (wFrom.blocked) throw new Error('Sender wallet is blocked');
       if (wFrom.balance < amount!) throw new Error('Insufficient funds');
-      await walletService.updateBalance(from.toString(), -amount!);
+
+      // Deduct balance from sender
+      await walletService.updateWalletBalance(wFrom._id.toString(), -amount!, session);
     }
+
     if (to) {
       const wTo = await walletService.getWalletByUserId(to.toString());
       if (!wTo) throw new Error('Recipient wallet not found');
       if (wTo.blocked) throw new Error('Recipient wallet is blocked');
-      await walletService.updateBalance(to.toString(), amount!);
+
+      // Add balance to receiver
+      await walletService.updateWalletBalance(wTo._id.toString(), amount!, session);
     }
+
     const tx = await TransactionModel.create([data], { session });
+
     await session.commitTransaction();
     return tx[0];
   } catch (err) {

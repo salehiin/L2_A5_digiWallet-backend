@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+
 export interface IWallet {
-  _id?: string;
+  _id?: Types.ObjectId;
   userId: string;
   balance: number;
   currency: string; // e.g., "USD", "BDT"

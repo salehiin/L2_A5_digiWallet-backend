@@ -2,14 +2,14 @@ import express from 'express';
 import {
   getAllTransactions,
   getMyTransactions,
-  createTransactionController
+  sendMoney
 } from './transaction.controller';
-import { authMiddleware, roleMiddleware } from '../../middlewares/auth';
+import { checkAuth } from '../../middlewares/checkAuth';
 
 const router = express.Router();
 
-router.get('/', authMiddleware(['admin']), getAllTransactions);
-router.get('/me', authMiddleware(['user', 'agent']), getMyTransactions);
-router.post('/', authMiddleware(['admin']), createTransactionController);
+router.get('/', checkAuth('admin'), getAllTransactions);
+router.get('/me', checkAuth('user', 'agent'), getMyTransactions);
+router.post('/send', checkAuth('admin', 'user'), sendMoney);
 
 export const TransactionRoutes = router;

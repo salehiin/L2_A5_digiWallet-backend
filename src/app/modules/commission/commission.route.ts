@@ -9,3 +9,4 @@ router.get("/", CommissionController.getAllCommissions);
 router.get("/:id", CommissionController.getSingleCommission);
 
 export const CommissionRoutes = router;
+

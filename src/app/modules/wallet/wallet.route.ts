@@ -1,21 +1,14 @@
 import express from 'express';
-import {
-  getAllWallets,
-  getSingleWallet,
-  deposit,
-  withdraw,
-  sendMoney,
-  getMyTransactions
-} from './wallet.controller';
-import { authMiddleware, roleMiddleware } from '../../middlewares/auth';
+import { createWallet, getAllWallets, getSingleWallet, deposit, withdraw, sendMoney, getMyTransactions } from './wallet.controller';
+import { checkAuth } from '../../middlewares/checkAuth';
 
 const router = express.Router();
 
-router.get('/', authMiddleware(['admin']), getAllWallets);
-router.get('/me', authMiddleware(['user', 'agent', 'admin']), getSingleWallet);
-router.post('/deposit', authMiddleware(['user', 'agent']), deposit);
-router.post('/withdraw', authMiddleware(['user', 'agent']), withdraw);
-router.post('/send', authMiddleware(['user']), sendMoney);
-router.get('/transactions', authMiddleware(['user', 'agent', 'admin']), getMyTransactions);
-
+router.post('/', checkAuth("user", "admin"), createWallet); // allow both user and admin
+router.get('/', checkAuth("admin"), getAllWallets);          // only admin
+router.get('/:id', checkAuth("user", "admin"), getSingleWallet);
+router.post('/deposit', checkAuth("user", "admin"), deposit);
+router.post('/withdraw', checkAuth("user", "admin"), withdraw);
+router.post('/transfer', checkAuth("user", "admin"), sendMoney);
+router.get('/my-transactions', checkAuth("user", "admin"), getMyTransactions);
 export const WalletRoutes = router;
