@@ -57,9 +57,11 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
 
 
         req.user = {
-            _id: decoded._id,
+            // _id: decoded._id,
+            _id: decoded.userId,
             email: decoded.email,
-            role: userRole,
+            // role: userRole,
+            role: decoded.role,
         };
         next()
 
