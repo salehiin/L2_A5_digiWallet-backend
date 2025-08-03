@@ -1,33 +1,43 @@
-import { TransactionModel, ITransaction } from './transaction.model';
-import * as walletService from '../wallet/wallet.service';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+// import { Transaction, ITransaction } from './transaction.model';
+// import { Transaction, ITransaction } from './transaction.model';
+import { getWalletByUserId } from '../wallet/wallet.service'
+import { updateWalletBalance } from '../wallet/wallet.service'
+
+import { Transaction } from './transaction.model';
+import { ITransaction } from './transaction.interface';
 import mongoose from 'mongoose';
 
 export async function createTransaction(data: Partial<ITransaction>): Promise<ITransaction> {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const { from, to, amount, type, createdBy } = data;
+    // const { from, to, amount, type, createdBy } = data;
+    const from = data.from;
+    const to = data.to;
+    const amount = data.amount;
 
-    if (from) {
-      const wFrom = await walletService.getWalletByUserId(from.toString());
-      if (!wFrom) throw new Error('Sender wallet not found');
-      if (wFrom.blocked) throw new Error('Sender wallet is blocked');
-      if (wFrom.balance < amount!) throw new Error('Insufficient funds');
+    if (data.from) {
+      const wFrom = await getWalletByUserId(data.from.toString());
+      if (!data.from) throw new Error('Missing sender');
+      if (!data.to) throw new Error('Missing recipient');
+      if (!data.amount) throw new Error('Missing amount');
 
-      // Deduct balance from sender
-      await walletService.updateWalletBalance(wFrom._id.toString(), -amount!, session);
+      await updateWalletBalance(new mongoose.Types.ObjectId(data._id), -data.amount, session);
     }
 
-    if (to) {
-      const wTo = await walletService.getWalletByUserId(to.toString());
-      if (!wTo) throw new Error('Recipient wallet not found');
-      if (wTo.blocked) throw new Error('Recipient wallet is blocked');
 
-      // Add balance to receiver
-      await walletService.updateWalletBalance(wTo._id.toString(), amount!, session);
+    if (data.to) {
+      const wTo = await getWalletByUserId(data.to.toString());
+      if (!wTo || !wTo._id) throw new Error('Recipient wallet not found or invalid');
+      if (wTo.isLocked) throw new Error('Recipient wallet is blocked');
+
+      await updateWalletBalance(new mongoose.Types.ObjectId(wTo._id), data.amount!, session);
     }
 
-    const tx = await TransactionModel.create([data], { session });
+
+    const tx = await Transaction.create([data], { session });
 
     await session.commitTransaction();
     return tx[0];
@@ -40,9 +50,9 @@ export async function createTransaction(data: Partial<ITransaction>): Promise<IT
 }
 
 export async function listTransactionsForUser(userId: string): Promise<ITransaction[]> {
-  return TransactionModel.find({ createdBy: userId }).sort({ createdAt: -1 }).lean();
+  return Transaction.find({ createdBy: userId }).sort({ createdAt: -1 }).lean();
 }
 
 export async function listAllTransactions(): Promise<ITransaction[]> {
-  return TransactionModel.find().sort({ createdAt: -1 }).populate('from to createdBy').lean();
+  return Transaction.find().sort({ createdAt: -1 }).populate('from to createdBy').lean();
 }

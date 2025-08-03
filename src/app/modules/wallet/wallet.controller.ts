@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Request, Response } from 'express';
 import * as walletService from './wallet.service';
 import * as txService from '../transaction/transaction.service';
@@ -55,8 +56,8 @@ export const deposit = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid deposit amount' });
   }
 
-  const createdBy = req.user!.id;
-  const userId = req.user!.id;
+  const createdBy = req.user!._id;
+  const userId = req.user!._id;
 
   try {
     const tx = await createTransaction({ to: userId, amount, type: 'deposit', createdBy });
@@ -74,8 +75,8 @@ export const withdraw = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid withdrawal amount' });
   }
 
-  const createdBy = req.user!.id;
-  const userId = req.user!.id;
+  const createdBy = req.user!._id;
+  const userId = req.user!._id;
 
   try {
     const tx = await createTransaction({ from: userId, amount, type: 'withdraw', createdBy });
@@ -93,8 +94,8 @@ export const sendMoney = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid recipient or amount' });
   }
 
-  const createdBy = req.user!.id;
-  const from = req.user!.id;
+  const createdBy = req.user!._id;
+  const from = req.user!._id;
   const to = toUserId;
 
   try {
@@ -107,7 +108,7 @@ export const sendMoney = async (req: Request, res: Response) => {
 
 
 export const getMyTransactions = async (_req: Request, res: Response) => {
-  const userId = _req.user!.id;
+  const userId = _req.user!._id;
   const txs = await txService.listTransactionsForUser(userId);
   res.json(txs);
 };

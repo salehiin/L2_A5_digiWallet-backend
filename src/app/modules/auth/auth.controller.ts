@@ -11,28 +11,24 @@ import { createUserTokens } from "../../utils/userTokens";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import passport from "passport";
+import mongoose from "mongoose";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    // const loginInfo = await AuthServices.credentialsLogin(req.body)
 
     passport.authenticate("local", async (error: any, user: any, info: any) => {
 
-        if(error){
+        if (error) {
             return next(new AppError(401, error))
-            // return next(error)
-            // return new AppError(401, error)
         }
 
-        if(!user){
+        if (!user) {
             return next(new AppError(401, info.message))
-            // return new AppError(401, info.message)
         }
 
         const userTokens = await createUserTokens(user)
 
-        // delete user.toObject().password
         const { password: pass, ...rest } = user.toObject()
 
         setAuthCookie(res, userTokens)
@@ -50,27 +46,6 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
 
     })(req, res, next)
 
-    // const loginInfo = await AuthServices.credentialsLogin(req.body)
-
-    // res.cookie("accessToken", loginInfo.accessToken, {
-    //     httpOnly: true,
-    //     secure: false
-    // })
-
-
-    // res.cookie("refreshToken", loginInfo.refreshToken, {
-    //     httpOnly: true,
-    //     secure: false
-    // })
-
-    // setAuthCookie(res, loginInfo)
-
-    // sendResponse(res, {
-    //     success: true,
-    //     statusCode: httpStatus.OK,
-    //     message: "Login successfull",
-    //     data: loginInfo
-    // })
 
 })
 
@@ -85,10 +60,7 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: N
 
     const tokenInfo = await AuthServices.getNewAccessToken(refreshToken as string)
 
-    // res.cookie("accessToken", tokenInfo.accessToken, {
-    //     httpOnly: true,
-    //     secure: false
-    // })
+    
 
     setAuthCookie(res, tokenInfo);
 
@@ -126,7 +98,6 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    // const decodedToken = req.user;
 
     const newPassword = req.body.newPassword;
     const oldPassword = req.body.oldPassword;
@@ -159,7 +130,10 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
         throw new AppError(httpStatus.NOT_FOUND, "User not found")
     }
 
-    const tokenInfo = createUserTokens(user)
+    const tokenInfo = createUserTokens({
+        ...user,
+        _id: new mongoose.Types.ObjectId(user._id), // 
+    })
 
     setAuthCookie(res, tokenInfo)
 

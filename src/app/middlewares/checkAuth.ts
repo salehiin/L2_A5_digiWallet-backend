@@ -3,7 +3,7 @@ import AppError from "../errorHelpers/AppError";
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../config/env";
 import httpStatus from "http-status-codes";
-import { isActive } from "../modules/user/user.interface";
+import { isActive, Role } from "../modules/user/user.interface";
 import { verifyToken } from "../utils/jwt";
 import { User } from "../modules/user/user.model";
 
@@ -61,7 +61,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
             _id: decoded.userId,
             email: decoded.email,
             // role: userRole,
-            role: decoded.role,
+            role: decoded.role as Role,
         };
         next()
 

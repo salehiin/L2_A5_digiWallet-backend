@@ -33,37 +33,37 @@ DigiWallet Backend is a Node.js and Express-based RESTful API server for a digit
 ## API Endpoints
 
 ### User
-| Endpoint                                    | Method | Description                      |
-|---------------------------------------------|--------|----------------------------------|
-| `/api/v1/user/register`                      | POST   | Register a new user              |
-| `/api/v1/user/all-users`                     | GET    | Retrieve all registered users    |
-| `/api/v1/user/:userId`                       | PATCH  | Update user details by ID        |
+| Endpoint                                     | Method | Description                            |
+|----------------------------------------------|--------|----------------------------------------|
+| `/api/v1/user/register`                      | POST   | Register a new user                    | 
+| `/api/v1/user/all-users`                     | GET    | Retrieve all registered users          |
+| `/api/v1/user/:userId`                       | PATCH  | Update user details by ID              |
 
 ### Auth
-| Endpoint                                    | Method | Description                       |
-|---------------------------------------------|--------|----------------------------------|
-| `/api/v1/auth/login`                         | POST   | User login                      |
-| `/api/v1/auth/refresh-token`                 | POST   | Get new access token             |
-| `/api/v1/auth/logout`                        | POST   | Logout user                     |
-| `/api/v1/auth/reset-password`                | POST   | Reset or change password         |
+| Endpoint                                     | Method | Description                            |
+|----------------------------------------------|--------|----------------------------------------|
+| `/api/v1/auth/login`                         | POST   | User login                             |
+| `/api/v1/auth/refresh-token`                 | POST   | Get new access token                   |
+| `/api/v1/auth/logout`                        | POST   | Logout user                            |
+| `/api/v1/auth/reset-password`                | POST   | Reset or change password               | (Problem)
 
 ### Transaction
-| Endpoint                                    | Method | Description                        |
-|---------------------------------------------|--------|----------------------------------|
-| `/api/v1/transaction/send`                   | POST   | Send money from one wallet to another |
-| `/api/v1/transaction`                        | GET    | Get all transactions (admin only) |
-| `/api/v1/transaction/my-transactions`       | GET    | Get transactions of the logged-in user |
+| Endpoint                                     | Method | Description                            |
+|----------------------------------------------|--------|----------------------------------------|
+| `/api/v1/transaction/send`                   | POST   | Send money from one wallet to another  |
+| `/api/v1/transaction`                        | GET    | Get all transactions (admin only)      |
+| `/api/v1/transaction/my-transactions`        | GET    | Get transactions of the logged-in user |
 
 ### Wallet
-| Endpoint                                    | Method | Description                        |
-|---------------------------------------------|--------|----------------------------------|
-| `/api/v1/wallet`                            | POST   | Create a wallet for a user         |
-| `/api/v1/wallet/:userId`                    | GET    | Get wallet details for a user      |
+| Endpoint                                     | Method | Description                            |
+|----------------------------------------------|--------|----------------------------------------|
+| `/api/v1/wallet`                             | POST   | Create a wallet for a user             |
+| `/api/v1/wallet/:userId`                     | GET    | Get wallet details for a user          | (Problem)
 
 ### Commission
-| Endpoint                                    | Method | Description                        |
-|---------------------------------------------|--------|----------------------------------|
-| `/api/v1/commission`                        | GET    | View all commissions               |
+| Endpoint                                     | Method | Description                            |
+|----------------------------------------------|--------|----------------------------------------|
+| `/api/v1/commission`                         | GET    | View all commissions                   |
 
 ---
 
@@ -74,7 +74,8 @@ DigiWallet Backend is a Node.js and Express-based RESTful API server for a digit
 - MongoDB instance (local or cloud, e.g. MongoDB Atlas)
 - npm or yarn
 
-### Installation
-1. Clone the repository
-```bash
-git clone https://github.com/salehiin/L2_A5_digiWallet-backend.git
+https://github.com/salehiin/L2_A5_digiWallet-backend.git
+
+
+pay0cent@gmail.com's Org
+@S0000z#

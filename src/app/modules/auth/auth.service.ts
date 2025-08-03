@@ -10,48 +10,6 @@ import { envVars } from "../../config/env";
 import { createNewAccessTokenWithRefreshToken, createUserTokens } from "../../utils/userTokens";
 
 
-// const credentialsLogin = async (payload: Partial<IUser>) => {
-//     const { email, password } = payload;
-
-//     const isUserExist = await User.findOne({ email })
-
-//     if (!isUserExist) {
-//         throw new AppError(httpStatus.BAD_REQUEST, "User doesn't exist")
-//     }
-
-//     const isPasswordMatched = await bcryptjs.compare(password as string, isUserExist.password as string)
-
-//     if (!isPasswordMatched) {
-//         throw new AppError(httpStatus.BAD_REQUEST, "Incorrect password")
-//     }
-
-//     // const jwtPayload = {
-//     //     userId: isUserExist._id,
-//     //     email: isUserExist.email,
-//     //     role: isUserExist.role
-//     // }
-
-//     // // const accessToken = jwt.sign(jwtPayload, "secret", {
-//     // //     expiresIn: "1d"
-//     // // })
-//     // const accessToken = generateToken(jwtPayload, envVars.JWT_ACCESS_SECRET, envVars.JWT_ACCESS_EXPIRES)
-//     // const refreshToken = generateToken(jwtPayload, envVars.JWT_REFRESH_SECRET, envVars.JWT_REFRESH_EXPIRES)
-
-//     const userTokens = createUserTokens(isUserExist)
-
-//     // delete isUserExist.password;
-
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//     const { password: pass, ...rest } = isUserExist.toObject()
-
-
-//     return {
-//         // ...rest
-//         accessToken: userTokens.accessToken,
-//         refreshToken: userTokens.refreshToken,
-//         user: rest
-//     }
-// }
 
 const getNewAccessToken = async (refreshToken: string) => {
     const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken)
@@ -63,16 +21,21 @@ const getNewAccessToken = async (refreshToken: string) => {
 
 const resetPassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
 
-    const user = await User.findById(decodedToken.userId)
+    // const user = await User.findById(decodedToken.userId)
+    const user = await User.findById(decodedToken._id)
+
+    if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
     
     const isOldPasswordMatch = await bcryptjs.compare(oldPassword, user!.password as string)
-    if(isOldPasswordMatch){
+    if(!isOldPasswordMatch){
         throw new AppError(httpStatus.UNAUTHORIZED, "Old password doesn't match");
     }
 
-    user!.password = await bcryptjs.hash(newPassword, Number(envVars.BCRYPT_SALT_ROUND))
+    user.password = await bcryptjs.hash(newPassword, Number(envVars.BCRYPT_SALT_ROUND))
 
-    user!.save();
+    await user.save();
 
 }
 
